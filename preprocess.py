@@ -59,9 +59,14 @@ all_feat = pd.merge(all_feat, course_enroll_num, left_on='course_id', right_inde
 
 
 #extract user cluster
-str_file = open('cluster/user_dict','r')
+#解决pickle.load错误(TypeError: a bytes-like object is required, not 'str'，由Python2和Python3代码引起)
+#将string类型的pickle文件强制转换为bytes类型
+f = open('cluster/user_dict','r')
+str_file = f.read()
 byte_file = bytes(str_file,'ascii')
-user_cluster_id = pkl.load(byte_file, encoding='bytes')
+user_cluster_id = pkl.loads(byte_file, encoding='bytes')
+
+#user_cluster_id = pkl.load(open('cluster/user_dict','r'))
 cluster_label = np.load('cluster/label_5_10time.npy')
 all_feat['cluster_label'] = [cluster_label[user_cluster_id[u]] for u in all_feat['username']]
 
