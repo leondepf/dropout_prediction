@@ -8,7 +8,7 @@ train_feat = pd.read_csv('train_features.csv', index_col=0)
 test_feat = pd.read_csv('test_features.csv', index_col=0)
 all_feat = pd.concat([train_feat, test_feat])
 
-user_profile = pd.read_csv('user_info.csv', index_col='user_id')
+user_profile = pd.read_csv('./prediction_log/user_info.csv', index_col='user_id')
 
 birth_year = user_profile['birth'].to_dict()
 def age_convert(y):
@@ -59,13 +59,15 @@ all_feat = pd.merge(all_feat, course_enroll_num, left_on='course_id', right_inde
 
 
 #extract user cluster
-user_cluster_id = pkl.load(open('cluster/user_dict','r'))
+str_file = open('cluster/user_dict','r')
+byte_file = bytes(str_file,'ascii')
+user_cluster_id = pkl.load(byte_file, encoding='bytes')
 cluster_label = np.load('cluster/label_5_10time.npy')
 all_feat['cluster_label'] = [cluster_label[user_cluster_id[u]] for u in all_feat['username']]
 
 
 #extract course category
-courseinfo = pd.read_csv('course_info.csv', index_col='id')
+courseinfo = pd.read_csv('./prediction_log/course_info.csv', index_col='id')
 en_categorys = ['math','physics','electrical', 'computer','foreign language', 'business', 'economics','biology','medicine','literature','philosophy','history','social science', 'art','engineering','education','environment','chemistry']
 
 def category_convert(cc):
